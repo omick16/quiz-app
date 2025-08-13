@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/widgets/answer_button.dart';
+import 'package:quiz_app/data/questions.dart';
 
-class QuestionScreen extends StatelessWidget {
+class QuestionScreen extends StatefulWidget {
+  const QuestionScreen({super.key});
+
+  @override
+  State<QuestionScreen> createState() => _QuestionScreenState();
+}
+
+class _QuestionScreenState extends State<QuestionScreen> {
+  var currentQuestionIndex = 0;
+  void answerQuestion() {
+    setState(() {
+      currentQuestionIndex++;
+    });
+  }
+
   @override
   Widget build(Object context) {
-    return const Center(
+    final currentQuestion = questions[currentQuestionIndex];
+
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'What are the main building blocks of Flutter UIs',
-            style: TextStyle(
+            currentQuestion.question,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 26,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20),
-          AnswerButton('Answer 1'),
-          AnswerButton('Answer 2'),
-          AnswerButton('Answer 3'),
-          AnswerButton('Answer 4'),
+          const SizedBox(height: 20),
+          //spread operator
+          ...currentQuestion.getShuffledAnswers().map((answer) {
+            return AnswerButton(answer, answerQuestion);
+          }),
         ],
       ),
     );
